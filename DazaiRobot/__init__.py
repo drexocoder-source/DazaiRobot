@@ -151,11 +151,25 @@ DEV_USERS.add(OWNER_ID)
 DEV_USERS.add(6171176459)
 
 
+import asyncio
+from aiohttp import ClientSession
+
+# Standard bot init
 updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
 telethn = TelegramClient("Dazai", API_ID, API_HASH)
-
 pbot = Client("DazaiRobot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN)
 dispatcher = updater.dispatcher
+
+# Create loop if not exists
+try:
+    loop = asyncio.get_event_loop()
+except RuntimeError:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+# Simple initialization for aiohttp session
+# Note: In some environments/versions, aiohttp might warn about being created outside of a loop
+# but usually it picks up the current loop if set.
 aiohttpsession = ClientSession()
 
 print("[INFO]: Getting Bot Info...")

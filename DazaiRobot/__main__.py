@@ -698,8 +698,7 @@ def settings_button(update: Update, context: CallbackContext):
     mod_match = re.match(r"stngs_module\((.+?),(.+?)\)", query.data)
     prev_match = re.match(r"stngs_prev\((.+?),(.+?)\)", query.data)
     next_match = re.match(r"stngs_next\((.+?),(.+?)\)", query.data)
-
-back_match = re.match(r"stngs_back\((.+?)\)", query.data)
+    back_match = re.match(r"stngs_back\((.+?)\)", query.data)
     try:
         if mod_match:
             chat_id = mod_match.group(1)
