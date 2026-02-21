@@ -1,80 +1,38 @@
-# We're using Debian Slim Buster image
 FROM python:3.8.5-slim-buster
 
-ENV PIP_NO_CACHE_DIR 1
+ENV PIP_NO_CACHE_DIR=1
 
-RUN sed -i.bak 's/us-west-2\.ec2\.//' /etc/apt/sources.list
-
-# Installing Required Packages
+# Install system packages
 RUN apt update && apt upgrade -y && \
     apt install --no-install-recommends -y \
-    debian-keyring \
-    debian-archive-keyring \
-    bash \
-    bzip2 \
-    curl \
-    figlet \
-    git \
-    util-linux \
-    libffi-dev \
-    libjpeg-dev \
-    libjpeg62-turbo-dev \
-    libwebp-dev \
-    linux-headers-amd64 \
-    musl-dev \
-    musl \
-    neofetch \
-    php-pgsql \
-    python3-lxml \
-    postgresql \
-    postgresql-client \
-    python3-psycopg2 \
-    libpq-dev \
-    libcurl4-openssl-dev \
-    libxml2-dev \
-    libxslt1-dev \
-    python3-pip \
-    python3-requests \
-    python3-sqlalchemy \
-    python3-tz \
-    python3-aiohttp \
-    openssl \
-    pv \
-    jq \
-    wget \
-    python3 \
-    python3-dev \
-    libreadline-dev \
-    libyaml-dev \
-    gcc \
-    sqlite3 \
-    libsqlite3-dev \
-    sudo \
-    zlib1g \
-    ffmpeg \
-    libssl-dev \
-    libgconf-2-4 \
-    libxi6 \
-    xvfb \
-    unzip \
-    libopus0 \
-    libopus-dev \
-    && rm -rf /var/lib/apt/lists /var/cache/apt/archives /tmp
+    git curl wget ffmpeg gcc supervisor \
+    libpq-dev libssl-dev libffi-dev \
+    libjpeg-dev zlib1g-dev \
+    python3-dev sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Pypi package Repo upgrade
-RUN pip3 install --upgrade pip setuptools
+# Upgrade pip
+RUN pip install --upgrade pip setuptools
 
-# Copy Python Requirements to /root/DazaiRobot
-RUN git clone https://github.com/Anonymous-068/DazaiRobot /root/DazaiRobot 
+# Clone repo
+RUN git clone https://github.com/Anonymous-068/DazaiRobot /root/DazaiRobot
 WORKDIR /root/DazaiRobot
 
-#Copy config file to /root/DazaiRobot/DazaiRobot
-COPY ./DazaiRobot/config.py ./DazaiRobot/config.py* /root/DazaiRobot/DazaiRobot/
-
-ENV PATH="/home/bot/bin:$PATH"
+# Copy config
+COPY ./DazaiRobot/config.py ./DazaiRobot/DazaiRobot/config.py
 
 # Install requirements
-RUN pip3 install -U -r requirements.txt
+RUN pip install -r requirements.txt
 
-# Starting Worker
-CMD ["python3","-m","DazaiRobot"]
+# Install Flask separately (if not in requirements)
+RUN pip install flask
+
+# Copy your Flask app
+COPY app.py /root/DazaiRobot/app.py
+
+# Copy supervisor config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 8000
+
+CMD ["/usr/bin/supervisord"]
