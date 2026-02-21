@@ -1,38 +1,40 @@
-FROM python:3.8.5-slim-buster
+FROM python:3.10-slim
 
 ENV PIP_NO_CACHE_DIR=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Install system packages
-RUN apt update && apt upgrade -y && \
-    apt install --no-install-recommends -y \
-    git curl wget ffmpeg gcc supervisor \
-    libpq-dev libssl-dev libffi-dev \
-    libjpeg-dev zlib1g-dev \
-    python3-dev sqlite3 \
+WORKDIR /app
+
+# Install required system packages only
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    ffmpeg \
+    gcc \
+    supervisor \
+    libpq-dev \
+    libssl-dev \
+    libffi-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy full project (instead of cloning)
+COPY . /app
+
 # Upgrade pip
-RUN pip install --upgrade pip setuptools
+RUN pip install --upgrade pip setuptools wheel
 
-# Clone repo
-RUN git clone https://github.com/Anonymous-068/DazaiRobot /root/DazaiRobot
-WORKDIR /root/DazaiRobot
-
-# Copy config
-COPY ./DazaiRobot/config.py ./DazaiRobot/DazaiRobot/config.py
-
-# Install requirements
+# Install dependencies (Flask should be inside requirements.txt)
 RUN pip install -r requirements.txt
 
-# Install Flask separately (if not in requirements)
-RUN pip install flask
+# Expose web port
+EXPOSE 8000
 
-# Copy your Flask app
-COPY app.py /root/DazaiRobot/app.py
-
-# Copy supervisor config
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+# Start supervisor
+CMD ["/usr/bin/supervisord"]
 EXPOSE 8000
 
 CMD ["/usr/bin/supervisord"]
