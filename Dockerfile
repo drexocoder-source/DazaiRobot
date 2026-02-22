@@ -32,9 +32,10 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # ─────────────────────────────────────
-# Upgrade core python tools (VERY IMPORTANT)
+# Upgrade core python tools
 # ─────────────────────────────────────
-RUN pip install --upgrade pip setuptools wheel
+# We install setuptools immediately to provide 'pkg_resources'
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # ─────────────────────────────────────
 # Clone Repository
@@ -45,9 +46,11 @@ WORKDIR /root/DazaiRobot
 # ─────────────────────────────────────
 # Install ALL requirements properly
 # ─────────────────────────────────────
+# Double-check setuptools is present in the workdir environment
+RUN pip install --no-cache-dir setuptools
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Force correct telegram version AFTER requirements
+# Force correct telegram version AFTER requirements to avoid conflicts
 RUN pip install --no-cache-dir --upgrade python-telegram-bot==13.15
 
 # ─────────────────────────────────────
