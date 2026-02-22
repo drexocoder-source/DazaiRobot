@@ -70,7 +70,8 @@ from DazaiRobot.modules.helper_funcs.handlers import (
 tg.RegexHandler = CustomRegexHandler
 tg.CommandHandler = CustomCommandHandler
 tg.MessageHandler = CustomMessageHandler
-
+import threading
+from app import run_web
 # ───────────── STARTUP ─────────────
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
@@ -84,6 +85,9 @@ if __name__ == "__main__":
 
     LOGGER.info("Starting Polling...")
     updater.start_polling(drop_pending_updates=True)
+
+    LOGGER.info("Starting Web Server...")
+    threading.Thread(target=run_web).start()
 
     try:
         loop.run_forever()
