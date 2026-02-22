@@ -31,7 +31,7 @@ RUN apt-get update && \
 RUN pip install --upgrade pip setuptools wheel
 
 # Clone repo
-RUN git clone https://github.com/Anonymous-068/DazaiRobot /root/DazaiRobot
+RUN git clone https://github.com/drexocoder-source/timepasshrkuchni /root/DazaiRobot
 WORKDIR /root/DazaiRobot
 
 # Copy config
