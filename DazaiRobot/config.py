@@ -43,7 +43,7 @@ if ENV:
     WOLVES = set(int(x) for x in os.environ.get("WOLVES", "").split() if x)
 
 else:
-    from DazaiRobot.config import Development as Config
+    raise Exception("ENV variables not enabled. Set ENV=True in environment.")
 
     API_ID = Config.API_ID
     API_HASH = Config.API_HASH
