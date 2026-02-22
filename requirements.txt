@@ -1,7 +1,6 @@
 aiofiles==23.1.0
 aiohttp==3.8.4
 apscheduler==3.6.3
-async_pymongo==0.1.6
 beautifulsoup4==4.12.2
 bing_image_downloader==1.1.2
 bleach==6.0.0
